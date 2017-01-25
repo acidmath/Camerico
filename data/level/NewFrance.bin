@@ -1,0 +1,4 @@
+dirt:top_left,dirt:top,dirt:top,dirt:top_right
+dirt:left,dirt:center,dirt:outer_top_right,dirt:bottom_right
+dirt:left,dirt:center,dirt:right,water:left
+dirt:bottom_left;dirt:bottom,dirt:bottomright,water:left
