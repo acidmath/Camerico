@@ -1,4 +1,22 @@
-dirt:top_left,dirt:top,dirt:top,dirt:top_right
-dirt:left,dirt:center,dirt:outer_top_right,dirt:bottom_right
-dirt:left,dirt:center,dirt:right,water:left
-dirt:bottom_left;dirt:bottom,dirt:bottomright,water:left
+-- first number defines tile type
+-- 0 = grass
+-- 1 = dirt
+-- 2 = water
+-- second number defines tile orientation
+-- 0 = top_left 
+-- 1 = top 
+-- 2 = top_right 
+-- 3 = right
+-- 4 = bottom_right
+-- 5 = bottom 
+-- 6 = bottom_left 
+-- 7 = left
+-- 8 = center
+-- 9 = outer_top_left
+-- A = outer_top_right 
+-- B = outer_bottom_left 
+-- C = outer_bottom_right 
+10111112
+17181A1C
+17181327
+16151427

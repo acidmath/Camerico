@@ -1,15 +1,24 @@
-local levelSprite
+require ("LevelGenerator")
+require ("LevelLoader")
 
+-- level stuff
+local levelSprite
+local levelTable
+local levelRowCount
+local levelColumnCount
+
+-- player stuff
 local playerBoatSprite
 local playerPosition_X = 300
 local playerPosition_Y = 300
+local playerOrientation = "up"
 
+-- world stuff
 local mapCenterX = 300
 local mapCenterY = 300
-
 local worldScale = 1
 
-local playerOrientation = "up"
+-- time stuff
 local frameTick = 0
 local frame = 1
 
@@ -17,27 +26,47 @@ local frame = 1
 local movingPlayer = false
 local movingMap = false
 
+-- error stuff
+local errorMessage = "no problems boss"
+
 function love.load()
-	levelSprite = dofile("LevelSprite.lua")
+	loadLevel()
     playerBoatSprite = dofile("PlayerBoatSprite.lua")
+end
+
+function loadLevel()
+    levelSprite = dofile("LevelSprite.lua")
+    -- setupLevel(levelLoader:load("NewFrance"))
+    local levelLoader = LevelLoader.new()    
+    local LevelGenerator = LevelGenerator.new()
+    setupLevel(levelLoader:load(LevelGenerator:generate("test", 64, 56)))
+end
+
+function setupLevel(loadedLevelTable, loadedLevelRowCount, loadedLevelColumnCount)
+    if loadedLevelRowCount == nil or loadedLevelColumnCount == nil then
+        errorMessage = loadedLevelTable
+    else
+        levelTable = loadedLevelTable
+        levelRowCount = loadedLevelRowCount
+        levelColumnCount = loadedLevelColumnCount
+        errorMessage = "rows: "..levelRowCount.." columns: "..levelColumnCount
+    end
 end
 
 function love.update()
     frameTick = frameTick + 1
-    if frameTick%50==0 then
+    if frameTick%50 == 0 then
         frameTick = 50
 	    frame = frame + 1
-        if frame%5==0 then
+        if frame%5 == 0 then
             frame = 1
         end
     end
 
     movePlayer()
-
 end
 
 function love.draw()
-    
     drawLevel()
 
     love.graphics.draw(
@@ -53,7 +82,7 @@ function love.draw()
     )
 
     love.graphics.print(
-        love.timer.getTime(),
+        errorMessage,
         0,
         0,
         0,
@@ -65,53 +94,21 @@ function love.draw()
 end
 
 function drawLevel()
-    love.graphics.draw(
-        levelSprite["image"], 
-        levelSprite["tiles"]["dirt"]["top_left"][1], 
-        mapCenterX, 
-        mapCenterY,
-        0, 
-        worldScale, 
-        worldScale, 
-        0, 
-        0
-    )
-
-    love.graphics.draw(
-        levelSprite["image"], 
-        levelSprite["tiles"]["dirt"]["top_right"][1], 
-        mapCenterX + levelSprite["side"]*worldScale, 
-        mapCenterY,
-        0, 
-        worldScale, 
-        worldScale, 
-        0, 
-        0
-    )
-    
-    love.graphics.draw(
-        levelSprite["image"], 
-        levelSprite["tiles"]["dirt"]["bottom_right"][1], 
-        mapCenterX + levelSprite["side"]*worldScale, 
-        mapCenterY + levelSprite["side"]*worldScale,
-        0, 
-        worldScale, 
-        worldScale, 
-        0, 
-        0
-    )
-
-    love.graphics.draw(
-        levelSprite["image"], 
-        levelSprite["tiles"]["dirt"]["bottom_left"][1], 
-        mapCenterX, 
-        mapCenterY + levelSprite["side"]*worldScale,
-        0, 
-        worldScale, 
-        worldScale, 
-        0, 
-        0
-    )
+    for i=1, levelRowCount do
+        for j=1, levelColumnCount do
+            love.graphics.draw(
+                levelSprite["image"],
+                levelSprite["tiles"][levelTable[i][j][1]][levelTable[i][j][2]][1],
+                mapCenterX + (i-1)*levelSprite["side"]*worldScale,
+                mapCenterY + (j-1)*levelSprite["side"]*worldScale,
+                0,
+                worldScale,
+                worldScale,
+                0,
+                0
+            )
+        end
+    end
 end
 
 function love.keypressed(key)
@@ -131,7 +128,6 @@ function love.mousepressed(x, y, button, istouch)
         else
             movingMap = true
         end
-        -- if no object under mouse, move world
     end
 end
 
@@ -154,9 +150,17 @@ end
 
 function love.wheelmoved(x, y)
     if y > 0 then
-        worldScale = worldScale + 0.05
-    else
-        worldScale = worldScale - 0.05
+        if worldScale < 10 then
+            worldScale = worldScale*1.1
+        else
+            worldScale = 10
+        end
+    elseif y < 0 then
+        if worldScale > 0.1 then
+            worldScale = worldScale*0.9
+        else
+            worldScale = 0.1
+        end
     end
 end
 
