@@ -5,7 +5,7 @@ require ("LevelLoader")
 local levelSprite
 local levelTable
 local levelRowCount
-local levelColumnCount
+local levelColumnCount 
 
 -- player stuff
 local playerBoatSprite
