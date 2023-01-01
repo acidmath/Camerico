@@ -17,7 +17,9 @@ function LevelGenerator:generate(seed, sizeRows, sizeCols)
     for row=1, sizeRows do
     	local hexLevelRow = ""
     	for column=1, sizeCols do
-    		hexLevelRow = hexLevelRow.."11"
+    		local randomNumber1 = math.random(2)    		
+    		local randomNumber2 = math.random(2)    		
+    		hexLevelRow = hexLevelRow.."1C"
     	end
     	writeLevelRow(hexLevelRow)
     end
