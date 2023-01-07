@@ -1,6 +1,14 @@
 require ("LevelGenerator")
 require ("LevelLoader")
 
+-- window stuff
+local windowWidth = 1280
+local windowHeight = 720
+
+-- menu stuff
+local menuWidth = 240
+local menuHeight = 80
+
 -- level stuff
 local levelSprite
 local levelTable
@@ -18,6 +26,10 @@ local mapCenterX = 300
 local mapCenterY = 300
 local worldScale = 1
 
+-- tree stuff
+local treeSprite
+local treeTable
+
 -- time stuff
 local frameTick = 0
 local frame = 1
@@ -30,7 +42,12 @@ local movingMap = false
 local errorMessage = "no problems boss"
 
 function love.load()
+    -- set window size
+    love.window.setMode(windowWidth, windowHeight, {})
+    
+    -- load sprites
 	loadLevel()
+    loadTree()
     playerBoatSprite = dofile("PlayerBoatSprite.lua")
 end
 
@@ -53,6 +70,10 @@ function setupLevel(loadedLevelTable, loadedLevelRowCount, loadedLevelColumnCoun
     end
 end
 
+function loadTree()
+    treeSprite = dofile("TreeSprite.lua")
+end
+
 function love.update()
     frameTick = frameTick + 1
     if frameTick%50 == 0 then
@@ -68,7 +89,8 @@ function love.update()
 end
 
 function love.draw()
-    drawLevel()
+    
+    drawLevel()   
 
     love.graphics.draw(
         playerBoatSprite["image"], 
@@ -92,6 +114,8 @@ function love.draw()
         0,
         0
     )
+
+    drawMenu()
 end
 
 function drawLevel()
@@ -110,6 +134,31 @@ function drawLevel()
             )
         end
     end
+end
+
+function drawMenu()
+
+    -- draw menu background
+    love.graphics.push()
+    love.graphics.setColor(200,15,10)
+    love.graphics.rectangle("fill", windowWidth*0.5 - menuWidth*0.5, windowHeight - menuHeight, menuWidth, menuHeight)
+    love.graphics.pop()
+
+    -- reset color
+    --love.graphics.setColor(255, 255, 255)
+
+    -- draw menu items
+    love.graphics.draw(
+        treeSprite["image"],
+        treeSprite["tiles"]["young"][1],
+        windowWidth*0.5 - menuWidth*0.5 + treeSprite["width"]*0.25,
+        windowHeight-treeSprite["height"]*0.25,
+        0,
+        0.25,
+        0.25,
+        0,
+        0        
+    )
 end
 
 function love.keypressed(key)
