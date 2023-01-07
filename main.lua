@@ -64,6 +64,7 @@ function love.update()
     end
 
     movePlayer()
+    moveMap()
 end
 
 function love.draw()
@@ -161,6 +162,20 @@ function love.wheelmoved(x, y)
         else
             worldScale = 0.1
         end
+    end
+end
+
+function moveMap()
+    if love.keyboard.isDown("w") then
+        mapCenterY = mapCenterY + 5        
+    elseif love.keyboard.isDown("s") then
+        mapCenterY = mapCenterY - 5   
+    end
+
+    if love.keyboard.isDown("a") then
+        mapCenterX = mapCenterX + 5        
+    elseif love.keyboard.isDown("d") then
+        mapCenterX = mapCenterX - 5        
     end
 end
 
