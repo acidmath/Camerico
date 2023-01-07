@@ -5,9 +5,15 @@ require ("LevelLoader")
 local windowWidth = 1280
 local windowHeight = 720
 
+-- mouse stuff
+local mousePosition_X = 0
+local mousePosition_Y = 0
+
 -- menu stuff
 local menuWidth = 240
 local menuHeight = 80
+local menuItemIsSelected = false
+local menuItemSelected_Sprite
 
 -- level stuff
 local levelSprite
@@ -89,7 +95,7 @@ function love.update()
 end
 
 function love.draw()
-    
+        
     drawLevel()   
 
     love.graphics.draw(
@@ -116,6 +122,9 @@ function love.draw()
     )
 
     drawMenu()
+
+    drawSelectedMenuItem()
+
 end
 
 function drawLevel()
@@ -161,6 +170,25 @@ function drawMenu()
     )
 end
 
+function drawSelectedMenuItem()
+
+    if menuItemIsSelected==false then return end
+
+    -- draw selected menu item under the mouse
+    love.graphics.draw(
+        treeSprite["image"],
+        treeSprite["tiles"]["young"][1],
+        mousePosition_X - treeSprite["width"]*0.25,
+        mousePosition_Y - treeSprite["height"]*0.25,
+        0,
+        0.25,
+        0.25,
+        0,
+        0        
+    )
+
+end
+
 function love.keypressed(key)
 	if key == "escape" or key == "q" then
 		love.event.quit()
@@ -168,13 +196,25 @@ function love.keypressed(key)
 end
 
 function love.mousepressed(x, y, button, istouch)
+
+    -- deselect any selected menu item
+    menuItemIsSelected = false
+
     if button == 1 then
-        if x<playerPosition_X + playerBoatSprite["side"]
+        -- menu selection
+        if x > windowWidth*0.5 - menuWidth*0.5
+            and x < windowWidth*0.5 + menuWidth*0.5
+            and y > windowHeight - menuHeight
+            then
+                menuItemIsSelected = true
+        -- move player
+        elseif x<playerPosition_X + playerBoatSprite["side"]
             and x>playerPosition_X 
             and y<playerPosition_Y + playerBoatSprite["side"]
             and y>playerPosition_Y
             then
-            movingPlayer = true
+                movingPlayer = true
+        -- move map
         else
             movingMap = true
         end
@@ -182,6 +222,10 @@ function love.mousepressed(x, y, button, istouch)
 end
 
 function love.mousemoved(x, y, dx, dy, istouch)    
+    
+    mousePosition_X = x
+    mousePosition_Y = y
+
     if movingPlayer then
         playerPosition_X = playerPosition_X + dx
         playerPosition_Y = playerPosition_Y + dy
